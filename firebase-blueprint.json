@@ -1,0 +1,97 @@
+{
+  "entities": {
+    "MasterCA": {
+      "title": "Master CA",
+      "description": "Data Agen/CA",
+      "type": "object",
+      "properties": {
+        "kode": { "type": "string", "description": "Kode unik CA" },
+        "nama": { "type": "string", "description": "Nama CA" }
+      },
+      "required": ["kode", "nama"]
+    },
+    "MasterBiller": {
+      "title": "Master Biller",
+      "description": "Data Biller",
+      "type": "object",
+      "properties": {
+        "kode": { "type": "string", "description": "Kode unik Biller" },
+        "nama": { "type": "string", "description": "Nama Biller" }
+      },
+      "required": ["kode", "nama"]
+    },
+    "MasterFee": {
+      "title": "Master Fee",
+      "description": "Data Fee per Biller per CA",
+      "type": "object",
+      "properties": {
+        "kode_biller": { "type": "string", "description": "Kode Biller" },
+        "kode_ca": { "type": "string", "description": "Kode CA" },
+        "fee": { "type": "number", "description": "Nilai Fee" },
+        "admin": { "type": "number", "description": "Nilai Admin" }
+      },
+      "required": ["kode_biller", "kode_ca", "fee", "admin"]
+    },
+    "MasterBank": {
+      "title": "Master Bank",
+      "description": "Data Bank Settlement",
+      "type": "object",
+      "properties": {
+        "bank_settel": { "type": "string", "description": "Nama Bank" },
+        "kode_biller": { "type": "string", "description": "Kode Biller" },
+        "kode_ca": { "type": "string", "description": "Kode CA" }
+      },
+      "required": ["bank_settel", "kode_biller", "kode_ca"]
+    },
+    "TransactionDetail": {
+      "title": "Transaction Detail",
+      "description": "Data Transaksi Detail",
+      "type": "object",
+      "properties": {
+        "id_pelanggan": { "type": "string", "description": "ID Pelanggan" },
+        "periode": { "type": "string", "description": "Periode Transaksi (YYYY-MM)" },
+        "kode_ca": { "type": "string", "description": "Kode CA" },
+        "nama_ca": { "type": "string", "description": "Nama CA" },
+        "kode_biller": { "type": "string", "description": "Kode Biller" },
+        "nama_biller": { "type": "string", "description": "Nama Biller" },
+        "lembar": { "type": "number", "description": "Jumlah Lembar" },
+        "nominal": { "type": "number", "description": "Nominal Transaksi" },
+        "createdAt": { "type": "string", "format": "date-time", "description": "Waktu Transaksi" }
+      },
+      "required": ["id_pelanggan", "periode", "kode_ca", "kode_biller", "lembar", "nominal"]
+    },
+    "AuditLog": {
+      "title": "Audit Log",
+      "description": "Log Aktivitas Sistem",
+      "type": "object",
+      "properties": {
+        "tgl": { "type": "string", "description": "Tanggal Log" },
+        "user": { "type": "string", "description": "Username" },
+        "aksi": { "type": "string", "description": "Jenis Aksi" },
+        "detail": { "type": "string", "description": "Detail Aksi" }
+      },
+      "required": ["tgl", "user", "aksi", "detail"]
+    },
+    "User": {
+      "title": "User",
+      "description": "Data Pengguna Sistem",
+      "type": "object",
+      "properties": {
+        "username": { "type": "string", "description": "Username" },
+        "role": { "type": "string", "description": "Role (Super Admin/Admin/User)" },
+        "status": { "type": "string", "description": "Status Akun" },
+        "email": { "type": "string", "description": "Email Pengguna" }
+      },
+      "required": ["username", "role", "status", "email"]
+    }
+  },
+  "firestore": {
+    "/master-ca/{id}": { "schema": "MasterCA", "description": "Koleksi Master CA" },
+    "/master-biller/{id}": { "schema": "MasterBiller", "description": "Koleksi Master Biller" },
+    "/master-fee/{id}": { "schema": "MasterFee", "description": "Koleksi Master Fee" },
+    "/master-bank/{id}": { "schema": "MasterBank", "description": "Koleksi Master Bank" },
+    "/detail-transaksi/{id}": { "schema": "TransactionDetail", "description": "Koleksi Detail Transaksi" },
+    "/audit-logs/{id}": { "schema": "AuditLog", "description": "Koleksi Audit Logs" },
+    "/users/{id}": { "schema": "User", "description": "Koleksi User" }
+  }
+}

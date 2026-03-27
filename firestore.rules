@@ -1,0 +1,101 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // ===============================================================
+    // Assumed Data Model
+    // ===============================================================
+    //
+    // Collection: users
+    // Fields: username, role, status, email
+    //
+    // Collection: master-ca
+    // Fields: kode, nama
+    //
+    // Collection: master-biller
+    // Fields: kode, nama
+    //
+    // Collection: master-fee
+    // Fields: kode_biller, kode_ca, fee, admin
+    //
+    // Collection: master-bank
+    // Fields: bank_settel, kode_biller, kode_ca
+    //
+    // Collection: detail-transaksi
+    // Fields: id_pelanggan, periode, kode_ca, nama_ca, kode_biller, nama_biller, lembar, nominal, createdAt
+    //
+    // Collection: audit-logs
+    // Fields: tgl, user, aksi, detail
+    //
+    // ===============================================================
+
+    // ===============================================================
+    // Helper Functions
+    // ===============================================================
+
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    function isAdmin() {
+      return isAuthenticated() &&
+        (get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'Super Admin' ||
+         get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'Admin' ||
+         (request.auth.token.email == "andri.krisdiyanto1996@gmail.com" && request.auth.token.email_verified == true));
+    }
+
+    function isOwner(userId) {
+      return isAuthenticated() && request.auth.uid == userId;
+    }
+
+    function hasOnlyAllowedFields(fields) {
+      return request.resource.data.keys().hasOnly(fields);
+    }
+
+    // ===============================================================
+    // Collection Rules
+    // ===============================================================
+
+    match /users/{userId} {
+      allow read: if isAuthenticated();
+      allow create: if isAuthenticated() && (isOwner(userId) || isAdmin());
+      allow update: if isAuthenticated() && (isOwner(userId) || isAdmin());
+      allow delete: if isAdmin();
+    }
+
+    match /user-management/{id} {
+      allow read, write: if isAdmin();
+    }
+
+    match /master-ca/{id} {
+      allow read: if isAuthenticated();
+      allow write: if isAdmin();
+    }
+
+    match /master-biller/{id} {
+      allow read: if isAuthenticated();
+      allow write: if isAdmin();
+    }
+
+    match /master-fee/{id} {
+      allow read: if isAuthenticated();
+      allow write: if isAdmin();
+    }
+
+    match /master-bank/{id} {
+      allow read: if isAuthenticated();
+      allow write: if isAdmin();
+    }
+
+    match /detail-transaksi/{id} {
+      allow read: if isAuthenticated();
+      allow write: if isAdmin();
+    }
+
+    match /audit-logs/{id} {
+      allow read: if isAuthenticated();
+      allow create: if isAuthenticated();
+      allow update, delete: if isAdmin();
+    }
+  }
+}
